@@ -1,33 +1,51 @@
 --[[
     GD50
-    Angry Birds
+    Pokemon
 
     Author: Colton Ogden
     cogden@cs50.harvard.edu
 
-    Released by Rovio in 2009, Angry Birds took the mobile gaming scene by storm back
-    when it was still arguably in its infancy. Using the simple gameplay mechanic of
-    slingshotting birds into fortresses of various materials housing targeted pigs,
-    Angry Birds succeeded with its optimized formula for on-the-go gameplay. It's an
-    excellent showcase of the ubiquitous Box2D physics library, the most widely used
-    physics library of its kind, which is also open source. This "clone" of Angry Birds
-    doesn't contain nearly the plethora of features as the original series of games
-    it's based on but does use Box2D to showcase the fundamental setup of what the game
-    looks like and how to use a subset of the physics library's features.
+    Few franchises have achieved the degree of fame as Pokemon, short for "Pocket Monsters",
+    a Japanese monster-catching phenomenon that took the world by storm in the late 90s. Even
+    to this day, Pokemon is hugely successful, with games, movies, and various other forms of
+    merchandise selling like crazy. The game formula itself is an addicting take on the JRPG,
+    where the player can not only fight random creatures in the wild but also recruit them to
+    be in his or her party at all times, where they can level up, learn new abilities, and even
+    evolve.
 
-    Music credit:
-    https://freesound.org/people/tyops/sounds/348166/
+    This proof of concept demonstrates basic GUI usage, random encounters, creatures that the
+    player can fight and catch with their own creatures, and basic NPC interaction in the form of
+    very simple dialogue.
 
-    Artwork credit:
-    https://opengameart.org/content/physics-assets
+    Credit for art:
+    Buch - https://opengameart.org/users/buch (tile sprites)
+
+    Monster sprites:
+    http://creativecommons.org/licenses/by-sa/4.0/
+        Aardart - Magic-Purple-Hermit
+            https://wiki.tuxemon.org/index.php?title=Magic-Purple-Hermit
+        Agnite - Leo, Sanglorian, and extyrannomon
+            https://wiki.tuxemon.org/index.php?title=Leo
+            https://wiki.tuxemon.org/index.php?title=Sanglorian
+            https://wiki.tuxemon.org/index.php?title=Extyrannomon&action=edit&redlink=1
+        Anoleaf - Spalding004
+            https://wiki.tuxemon.org/index.php?title=Spalding004
+        Bamboon - Mike Bramson
+            mnbramson@gmail.com
+        Cardiwing - Spalding004
+            https://wiki.tuxemon.org/index.php?title=Spalding004
+
+    Credit for music:
+    Field: https://freesound.org/people/Mrthenoronha/sounds/371843/
+    Battle: https://freesound.org/people/Sirkoto51/sounds/414214/
 ]]
 
 require 'src/Dependencies'
 
 function love.load()
-    math.randomseed(os.time())
+    love.window.setTitle('Poke50')
     love.graphics.setDefaultFilter('nearest', 'nearest')
-    love.window.setTitle('Angry 50')
+    math.randomseed(os.time())
 
     push:setupScreen(VIRTUAL_WIDTH, VIRTUAL_HEIGHT, WINDOW_WIDTH, WINDOW_HEIGHT, {
         fullscreen = false,
@@ -35,66 +53,42 @@ function love.load()
         resizable = true
     })
 
-    gStateMachine = StateMachine {
-        ['start'] = function() return StartState() end,
-        ['play'] = function() return PlayState() end
-    }
-    gStateMachine:change('start')
+    -- this time, we are using a stack for all of our states, where the field state is the
+    -- foundational state; it will have its behavior preserved between state changes because
+    -- it is essentially being placed "behind" other running states as needed (like the battle
+    -- state)
 
-    gSounds['music']:setLooping(true)
-    gSounds['music']:play()
+    gStateStack = StateStack()
+    gStateStack:push(StartState())
 
     love.keyboard.keysPressed = {}
-    love.mouse.keysPressed = {}
-    love.mouse.keysReleased = {}
-
-    paused = false
 end
 
-function push.resize(w, h)
+function love.resize(w, h)
     push:resize(w, h)
 end
 
 function love.keypressed(key)
-    if key == 'p' then
-        paused = not paused
+    if key == 'escape' then
+        love.event.quit()
     end
 
     love.keyboard.keysPressed[key] = true
-end
-
-function love.mousepressed(x, y, key)
-    love.mouse.keysPressed[key] = true
-end
-
-function love.mousereleased(x, y, key)
-    love.mouse.keysReleased[key] = true 
 end
 
 function love.keyboard.wasPressed(key)
     return love.keyboard.keysPressed[key]
 end
 
-function love.mouse.wasPressed(key)
-    return love.mouse.keysPressed[key]
-end
-
-function love.mouse.wasReleased(key)
-    return love.mouse.keysReleased[key]
-end
-
 function love.update(dt)
-    if not paused then
-        gStateMachine:update(dt)
+    Timer.update(dt)
+    gStateStack:update(dt)
 
-        love.keyboard.keysPressed = {}
-        love.mouse.keysPressed = {}
-        love.mouse.keysReleased = {}
-    end
+    love.keyboard.keysPressed = {}
 end
 
 function love.draw()
     push:start()
-    gStateMachine:render()
+    gStateStack:render()
     push:finish()
 end
