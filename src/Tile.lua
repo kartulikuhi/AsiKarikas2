@@ -1,46 +1,46 @@
 --[[
     GD50
-    Match-3 Remake
-
-    -- Tile Class --
+    -- Super Mario Bros. Remake --
 
     Author: Colton Ogden
     cogden@cs50.harvard.edu
-
-    The individual tiles that make up our game board. Each Tile can have a
-    color and a variety, with the varietes adding extra points to the matches.
 ]]
 
 Tile = Class{}
 
-function Tile:init(x, y, color, variety, shiny)
-    
-    -- board positions
-    self.gridX = x
-    self.gridY = y
-    self.isShiny = shiny
-    -- coordinate positions
-    self.x = (self.gridX - 1) * 32
-    self.y = (self.gridY - 1) * 32
+function Tile:init(x, y, id, topper, tileset, topperset)
+    self.x = x
+    self.y = y
 
-    -- tile appearance/points
-    self.color = color
-    self.variety = variety
+    self.width = TILE_SIZE
+    self.height = TILE_SIZE
+
+    self.id = id
+    self.tileset = tileset
+    self.topper = topper
+    self.topperset = topperset
 end
 
-function Tile:render(x, y)
-    
-    -- draw shadow
-    love.graphics.setColor(34, 32, 52, 255)
-    love.graphics.draw(gTextures['main'], gFrames['tiles'][self.color][self.variety], self.x + x + 2, self.y + y + 2)
+--[[
+    Checks to see whether this ID is whitelisted as collidable in a global constants table.
+]]
+function Tile:collidable(target)
+    for k, v in pairs(COLLIDABLE_TILES) do
+        if v == self.id then
+            return true
+        end
+    end
 
-    -- draw tile itself
-    love.graphics.setColor(255, 255, 255, 255)
-    love.graphics.draw(gTextures['main'], gFrames['tiles'][self.color][self.variety],
-        self.x + x, self.y + y)
-    if self.isShiny then
-        love.graphics.setColor(255, 223, 0, 100)
-        love.graphics.circle('fill', self.x + x + 16, self.y + y + 16, 4)
-        love.graphics.setColor(255, 255, 255, 255)
+    return false
+end
+
+function Tile:render()
+    love.graphics.draw(gTextures['tiles'], gFrames['tilesets'][self.tileset][self.id],
+        (self.x - 1) * TILE_SIZE, (self.y - 1) * TILE_SIZE)
+    
+    -- tile top layer for graphical variety
+    if self.topper then
+        love.graphics.draw(gTextures['toppers'], gFrames['toppersets'][self.topperset][self.id],
+            (self.x - 1) * TILE_SIZE, (self.y - 1) * TILE_SIZE)
     end
 end

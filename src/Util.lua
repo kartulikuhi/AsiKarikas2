@@ -1,6 +1,6 @@
 --[[
     GD50
-    Match-3 Remake
+    Super Mario Bros. Remake
 
     -- StartState Class --
 
@@ -11,39 +11,55 @@
 ]]
 
 --[[
-    Given an "atlas" (a texture with multiple sprites), generate all of the
-    quads for the different tiles therein, divided into tables for each set
-    of tiles, since each color has 6 varieties.
+    Given an "atlas" (a texture with multiple sprites), as well as a
+    width and a height for the tiles therein, split the texture into
+    all of the quads by simply dividing it evenly.
 ]]
-function GenerateTileQuads(atlas)
-    local tiles = {}
+function GenerateQuads(atlas, tilewidth, tileheight)
+    local sheetWidth = atlas:getWidth() / tilewidth
+    local sheetHeight = atlas:getHeight() / tileheight
 
-    local x = 0
-    local y = 0
+    local sheetCounter = 1
+    local spritesheet = {}
 
-    local counter = 1
-
-    -- 9 rows of tiles
-    for row = 1, 9 do
-        
-        -- two sets of 6 cols, different tile varietes
-        for i = 1, 2 do
-            tiles[counter] = {}
-            
-            for col = 1, 6 do
-                table.insert(tiles[counter], love.graphics.newQuad(
-                    x, y, 32, 32, atlas:getDimensions()
-                ))
-                x = x + 32
-            end
-
-            counter = counter + 1
+    for y = 0, sheetHeight - 1 do
+        for x = 0, sheetWidth - 1 do
+            spritesheet[sheetCounter] =
+                love.graphics.newQuad(x * tilewidth, y * tileheight, tilewidth,
+                tileheight, atlas:getDimensions())
+            sheetCounter = sheetCounter + 1
         end
-        y = y + 32
-        x = 0
     end
 
-    return tiles
+    return spritesheet
+end
+
+--[[
+    Divides quads we've generated via slicing our tile sheet into separate tile sets.
+]]
+function GenerateTileSets(quads, setsX, setsY, sizeX, sizeY)
+    local tilesets = {}
+    local tableCounter = 0
+    local sheetWidth = setsX * sizeX
+    local sheetHeight = setsY * sizeY
+
+    -- for each tile set on the X and Y
+    for tilesetY = 1, setsY do
+        for tilesetX = 1, setsX do
+            
+            -- tileset table
+            table.insert(tilesets, {})
+            tableCounter = tableCounter + 1
+
+            for y = sizeY * (tilesetY - 1) + 1, sizeY * (tilesetY - 1) + 1 + sizeY do
+                for x = sizeX * (tilesetX - 1) + 1, sizeX * (tilesetX - 1) + 1 + sizeX do
+                    table.insert(tilesets[tableCounter], quads[sheetWidth * (y - 1) + x])
+                end
+            end
+        end
+    end
+
+    return tilesets
 end
 
 --[[
@@ -82,4 +98,31 @@ function print_r ( t )
         sub_print_r(t,"  ")
     end
     print()
+end
+
+function GenerateFlagsQuads(atlas)
+    local flags = {}
+    local sheetCounter = 1
+
+    for x = 0, 5 do
+        flags[sheetCounter] = love.graphics.newQuad(x * 16, 0, 16, 48, atlas:getDimensions())
+        sheetCounter = sheetCounter + 1
+    end
+
+    for x = 7, 9 do
+        for y = 0, 3 do
+            flags[sheetCounter] = love.graphics.newQuad(x*16, y*16, 16, 16, atlas:getDimensions())
+            sheetCounter = sheetCounter + 1
+        end
+    end
+
+    return flags
+end
+
+function tableSlice(tbl, startpoint, endpoint, gap)
+    local slicedTable = {}
+    for i = 1 or startpoint, #tbl or endpoint, gap or 1 do
+        table.insert(slicedTable, tbl[i])
+    end
+    return slicedTable
 end
