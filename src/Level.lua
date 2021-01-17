@@ -17,6 +17,8 @@ function Level:init()
     -- actual collision callbacks can cause stack overflow and other errors
     self.destroyedBodies = {}
     self.collided = false
+    self.duplicated = false
+    self.enemyAlienCounter = 1
 
     -- define collision callbacks for our world; the World object expects four,
     -- one for different stages of any given collision
@@ -152,7 +154,7 @@ function Level:update(dt)
     -- update launch marker, which shows trajectory
     self.launchMarker:update(dt)
 
-    if love.keyboard.wasPressed('a') and self.launchMarker.launched and not self.collided then
+    if love.keyboard.wasPressed('space') and self.launchMarker.launched and not self.collided and not self.duplicated then
 
         local xVelocity1, yVelocity1 = self.launchMarker.alien.body:getLinearVelocity()
         yVelocity1 = yVelocity1 - 20
@@ -165,6 +167,8 @@ function Level:update(dt)
         self.alien2 = Alien(self.world, 'round', self.launchMarker.alien.body:getX(), self.launchMarker.alien.body:getY(), 'Player')
         self.alien2.body:setLinearVelocity(xVelocity2, yVelocity2)
         table.insert(self.aliens, self.alien2)
+
+        self.duplicated = true
 
     end
 
@@ -204,19 +208,34 @@ function Level:update(dt)
 
     -- replace launch marker if original alien stopped moving
     if self.launchMarker.launched then
+        
         local xPos, yPos = self.launchMarker.alien.body:getPosition()
         local xVel, yVel = self.launchMarker.alien.body:getLinearVelocity()
         
         -- if we fired our alien to the left or it's almost done rolling, respawn
+        local counter = 0
+
+        for k, alien in pairs(self.aliens) do 
+            if alien.type == 'square' then
+                counter = counter + 1
+            end
+        end
+        
+        if counter == 0 then
+            self.enemyAlienCounter = 0
+        end
+
         if xPos < 0 or (math.abs(xVel) + math.abs(yVel) < 1.5) then
             self.launchMarker.alien.body:destroy()
             self.launchMarker = AlienLaunchMarker(self.world)
 
-            -- re-initialize level if we have no more aliens
-            if #self.aliens == 0 then
+            -- re-initialize level if we have no more alien
+
+            if self.enemyAlienCounter == 0 then
                 gStateMachine:change('start')
             end
         end
+
     end
 end
 
@@ -246,7 +265,7 @@ function Level:render()
     end
 
     -- render victory text if all aliens are dead
-    if #self.aliens == 0 then
+    if self.enemyAlienCounter == 0 then
         love.graphics.setFont(gFonts['huge'])
         love.graphics.setColor(0, 0, 0, 255)
         love.graphics.printf('VICTORY', 0, VIRTUAL_HEIGHT / 2 - 32, VIRTUAL_WIDTH, 'center')
