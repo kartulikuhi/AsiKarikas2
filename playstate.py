@@ -22,20 +22,14 @@ class PlayState(object):
         self.x = 0
 
     def update(self):
-        while True:
-            update()
-            self.doMoveCPU()
-            update()
-            self.doMoveCPU()
-            update()
-        # if self.opponent == 'Player':
-        #     while True:
-        #         turtle.Screen().onclick(self.WhatRow)
-        #         update()
-        # else:
-        #     while True:
-        #         turtle.Screen().onclick(self.WhatRowCPU)
-        #         update()
+        if self.opponent == 'Player':
+            while True:
+                turtle.Screen().onclick(self.WhatRow)
+                update()
+        else:
+            while True:
+                turtle.Screen().onclick(self.WhatRowCPU)
+                update()
 
     def WhatRow(self, x, y):
         goto(x,y)
