@@ -56,11 +56,17 @@ class CPU(object):
     
                                 
 
-    def makeMediumMove(self, board):
+    def makeMediumMove(self, board): 
 
-            (best_col, best_score) = self.findBestMove(board, 2, 4)
+        (best_col, best_score) = self.findBestMove(board, 2, 4)
 
+        if best_col is not None:
             return best_col
+
+        x = 0
+        while board[x][0] != False:
+            x += 1
+        return x
 
 
 
@@ -68,9 +74,15 @@ class CPU(object):
 
         (best_col, best_score) = self.findBestMove(board, 2, 6)
 
-        return best_col
+        if best_col is not None:
+            return best_col
+        
+        x = 0
+        while board[x][0] != False:
+            x += 1
+        return x
 
-    def findBestMove(self, board, player: int, turn_count):
+    def findBestMove(self, board, player, turn_count):
 
 
         other_player = 1 if player == 2 else 2
@@ -95,7 +107,7 @@ class CPU(object):
 
                 if board.calculateWins(player, [column, row]):
 
-                    score = 1000
+                    score = 100 * turn_count
 
                 else:
 
@@ -105,11 +117,9 @@ class CPU(object):
 
                     else:
 
-                        (col_other, score_other) = self.findBestMove(board, other_player, turn_count-1)
+                        (col_other, score_other) = self.findBestMove(board, other_player, turn_count - 1)
 
                         if col_other is not None:
-
-                            # Move were possible
 
                             score = -score_other
 
@@ -117,18 +127,25 @@ class CPU(object):
 
 
 
-                if score is not None and (best_score is None or best_score < score):
+                if score is not None and (best_score is None or best_score <= score):
 
-                    best_score = score
+                    if best_score == score:
+                        if random.randrange(3) == 1:
 
-                    best_col = column
+                            best_score = score
+
+                            best_col = column
+                    else:
+                        best_score = score
+
+                        best_col = column
 
                 break
 
             if best_score is not None and best_score >= 1000:
 
                 break
-
+        
         return best_col, best_score
             
             
