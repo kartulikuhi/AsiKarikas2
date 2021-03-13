@@ -59,14 +59,9 @@ class CPU(object):
     def makeMediumMove(self, board): 
 
         (best_col, best_score) = self.findBestMove(board, 2, 4)
+        print(best_col, best_score)
 
-        if best_col is not None:
-            return best_col
-
-        x = 0
-        while board[x][0] != False:
-            x += 1
-        return x
+        return best_col
 
 
 
@@ -74,13 +69,7 @@ class CPU(object):
 
         (best_col, best_score) = self.findBestMove(board, 2, 6)
 
-        if best_col is not None:
-            return best_col
-        
-        x = 0
-        while board[x][0] != False:
-            x += 1
-        return x
+        return best_col
 
     def findBestMove(self, board, player, turn_count):
 
@@ -117,7 +106,7 @@ class CPU(object):
 
                     else:
 
-                        (col_other, score_other) = self.findBestMove(board, other_player, turn_count - 1)
+                        (col_other, score_other) = self.findBestMove(board, other_player, turn_count-1)
 
                         if col_other is not None:
 
@@ -127,18 +116,11 @@ class CPU(object):
 
 
 
-                if score is not None and (best_score is None or best_score <= score):
+                if score is not None and (best_score is None or best_score < score):
 
-                    if best_score == score:
-                        if random.randrange(3) == 1:
+                    best_score = score
 
-                            best_score = score
-
-                            best_col = column
-                    else:
-                        best_score = score
-
-                        best_col = column
+                    best_col = column
 
                 break
 

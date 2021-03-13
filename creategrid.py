@@ -44,8 +44,9 @@ def CreateGrid():
             difficulty = 3
             
     screen = Screen().setup(res,res)
-    speed(0)
-    turtle.bgcolor('purple')
+    clearscreen()
+    ht()
+    turtle.bgcolor('blue')
     def line(a, b, x, y):
         turtle.up()
         turtle.goto(a, b)
@@ -56,7 +57,6 @@ def CreateGrid():
     gap = round((res*0.95) / wide)
     start = -0.5 * res * 0.95
     turtle.Screen().tracer(0, 0)
-    ht()
     for i in range(wide+1):
         pos = start + (i * gap)
         line(pos, 0.35 * res, pos, res * -0.5)
@@ -72,4 +72,4 @@ def CreateGrid():
             turtle.goto(-0.5 * res + (x * gap + 0.025 * res) + 0.5 * gap, -0.5 * res + (y * gap2 + 0.015 * res) + 0.5 * realg) 
             turtle.dot(realg, 'white')
     up()
-    return tall, wide, realg, gap, res, gap2, opponent, difficulty
+    return tall, wide, realg, gap, res, gap2, opponent, difficulty, screen

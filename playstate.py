@@ -6,7 +6,6 @@ from coin import Coin
 from functions import play
 from cpu import CPU
 import time
-
 class PlayState(object):
     def __init__(self, board_height, board_width, realg, gap, res, gap2, opponent, CPU_difficulty):
         self.board = Board(board_height, board_width)
@@ -20,29 +19,30 @@ class PlayState(object):
         self.opponent = opponent
         self.CPU = CPU(CPU_difficulty)
         self.x = 0
+        self.temp = 0
 
     def update(self):
         if self.opponent == 'Player':
             while True:
-                game_over = turtle.Screen().onclick(self.WhatRow)
+                if self.temp != 0:
+                    return self.temp
+                else:
+                    turtle.Screen().onclick(self.WhatRow)
                 update()
-
-                if game_over is not None:
-                    return game_over
         else:
             while True:
-                game_over = turtle.Screen().onclick(self.WhatRowCPU)
-                update()
-
-                if game_over is not None:
-                    return game_over
+                if self.temp != 0:
+                    return self.temp
+                else:
+                    turtle.Screen().onclick(self.WhatRowCPU)
+                    update()
 
     def WhatRow(self, x, y):
         goto(x,y)
         self.activeCoin.x = int(((self.res*0.95 * -0.5) + xcor())//self.gap) + self.board.columns
         update()
         self.doMove()
-
+        
     def WhatRowCPU(self, x, y):
         goto(x, y)
         self.activeCoin.x = int(((self.res*0.95 * -0.5) + xcor())//self.gap) + self.board.columns
@@ -73,10 +73,12 @@ class PlayState(object):
 
                 if self.board.calculateWins(self.player, [self.activeCoin.x, board_y]):
                     play('winsound')
+                    self.temp = self.player
                     return [self.player, self.board]
                 else:
                     if self.turnCount > self.board.rows * self.board.columns:
                         play('tiesound')
+                        self.temp = 'tie'
                         return [0, self.board]
                     else:
 
