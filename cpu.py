@@ -1,4 +1,5 @@
 import random
+from sys import call_tracing
 
 class CPU(object):
 
@@ -37,13 +38,13 @@ class CPU(object):
                         score = temp_score
                         return_vals = [column]
 
-                    if board.calculateWins(2):
+                    if board.calculateWins(2, [column, row]):
                         board_copy[column][row] = False
                         return column
 
                     board_copy[column][row] = 1
 
-                    if board.calculateWins(1):
+                    if board.calculateWins(1, [column, row]):
                         board_copy[column][row] = False
                         return column
 
@@ -52,89 +53,82 @@ class CPU(object):
                     break
         
         return random.choice(return_vals)
-        
-            
-            
-
-    def makeMediumMove(self, board):
-        board_copy = board.tileMap
-        score = 0
-        return_vals = []
-
-        for column in range(board.columns):
-            for row in range(board.rows - 1, -1, -1):
-
-                if board_copy[column][row] == False:
-                    
-                    board_copy[column][row] = 2
-
-                    if board.calculateWins(2):
-                        board_copy[column][row] = False
-                        return column
-                    
-                    board_copy[column][row] = 1
-
-                    if board.calculateWins(1):
-                        board_copy[column][row] = False
-                        return column
-                    
-                    board_copy[column][row] = 2
-
-                    for column2 in range(board.columns):
-                        temp_score1 = 0
-                        for row2 in range(board.rows - 1, -1, -1):
-
-                            if board_copy[column2][row2] == False:
-
-                                board_copy[column2][row2] = 1
-
-                                if board.calculateWins(1):
-                                    board_copy[column][row] = False
-                                    board_copy[column2][row2] = False
-                                    break
-
-                                enemy_straight = board.returnLongestStraight(1)
-                                if enemy_straight[0] == 3:
-                                    temp_score1 += 4 * len(enemy_straight)
-
-
-                                for column3 in range(board.columns):
-                                    temp_score2 = 0
-                                    for row3 in range(board.rows):
-
-                                        if board_copy[column3][row3] == False:
-
-                                            board_copy[column3][row3] = 2
-
-                                            CPU_wins = board.calculateWinCount(2)
-
-                                            temp_score2 += 10 * CPU_wins
-                                            
-                                            CPU_straight = board.returnLongestStraight(2)
-                                            if CPU_straight[0] == 3:
-                                                temp_score2 += 4 * len(CPU_straight)
-
-                                            score_diff = temp_score2 - temp_score1
-                                            if score_diff > score:
-                                                score = score_diff
-                                                return_vals = [column]
-                                            elif score_diff == score:
-                                                return_vals.append(column)
-                                            
-                                            board_copy[column3][row3] = False
-                                            break
-                                            
-
-                                board_copy[column2][row2] = False
-                    board_copy[column][row] = False
-
-        if len(return_vals) == 0:
-            while True:
-                x = random.randrange(board.columns)
-                if board_copy[x][0] == False:
-                    return x
-        return random.choice(return_vals)
+    
                                 
 
+    def makeMediumMove(self, board):
+
+            (best_col, best_score) = self.findBestMove(board, 2, 4)
+
+            return best_col
+
+
+
     def makeHardMove(self, board):
-        pass
+
+        (best_col, best_score) = self.findBestMove(board, 2, 6)
+
+        return best_col
+
+    def findBestMove(self, board, player: int, turn_count):
+
+
+        other_player = 1 if player == 2 else 2
+
+        best_score = None
+
+        best_col = None
+
+        for column in range(board.columns):
+
+            for row in range(board.rows - 1, -1, -1):
+
+                if board.tileMap[column][row]:
+
+                    continue
+
+
+
+                score = None
+
+                board.tileMap[column][row] = player
+
+                if board.calculateWins(player, [column, row]):
+
+                    score = 1000
+
+                else:
+
+                    if turn_count == 1:
+
+                        score = board.returnScore(player, [column, row])
+
+                    else:
+
+                        (col_other, score_other) = self.findBestMove(board, other_player, turn_count-1)
+
+                        if col_other is not None:
+
+                            # Move were possible
+
+                            score = -score_other
+
+                board.tileMap[column][row] = False
+
+
+
+                if score is not None and (best_score is None or best_score < score):
+
+                    best_score = score
+
+                    best_col = column
+
+                break
+
+            if best_score is not None and best_score >= 1000:
+
+                break
+
+        return best_col, best_score
+            
+            
