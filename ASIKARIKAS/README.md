@@ -15,5 +15,5 @@ Raske tasemega CPU vastu mängides ei ole soovituslik valida rohkem kui 8 veergu
 
 Inimene VS inimene mängudes võib võtta nii suure laua kui on soovitud.
 
-NB! Akna suurust mitte käsitsi muuta (nurgas suuremaks lohistades), sest muidu ei teki mängus mahapandud mündid õigetesse kohtadesse.
+
 
