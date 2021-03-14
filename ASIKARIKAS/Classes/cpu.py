@@ -24,7 +24,7 @@ class CPU(object):
             return best_col
         
         x = 0
-        while board[x][0] != False:
+        while board.tileMap[x][0] != False:
             x += 1
         return x
     
@@ -38,7 +38,7 @@ class CPU(object):
             return best_col
 
         x = 0
-        while board[x][0] != False:
+        while board.tileMap[x][0] != False:
             x += 1
         return x
 
@@ -52,7 +52,7 @@ class CPU(object):
             return best_col
         
         x = 0
-        while board[x][0] != False:
+        while board.tileMap[x][0] != False:
             x += 1
         return x
 

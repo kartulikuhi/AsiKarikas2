@@ -4,36 +4,38 @@ import os
 
 class GameOverState(object):
 
-    def writeResults(result, turn_count, opponent, difficulty, resolution): #Kirjutab mängu lõppedes mängu tulemuse ekraanile ning lisab ka nupu mida vajutades saab uuesti mängida.
+    def writeResults(result, turn_count, opponent, difficulty, width, height, resolution): #Kirjutab mängu lõppedes mängu tulemuse ekraanile ning lisab ka nupu mida vajutades saab uuesti mängida.
         
+        board_dimensions = str(height) + 'x' + str(width) + ' board'
         CPU_difficulty = {1: 'easy', 2: 'medium', 3: 'hard'}
         result_to_save = datetime.now().strftime(' on %d/%m/%Y at %H:%M')
 
         turn_count -= 1
-        
+
+        #Kood mis kuvab ekraanile mängu tulemuse ning valmistab ette ka teksti, mida salvestada.
         if result == 'tie':
             text = "It's a tie!"
 
             if opponent == 'CPU':
-                result_to_save = 'The game ended in a draw VS ' + CPU_difficulty[difficulty] + ' CPU' + result_to_save
+                result_to_save = 'The game ended in a draw VS ' + CPU_difficulty[difficulty] + ' CPU on a ' + board_dimensions + result_to_save
             else:
-                result_to_save = 'The game ended in a draw' + result_to_save
+                result_to_save = 'The game ended in a draw on a ' + board_dimensions + result_to_save
 
         elif result == 1:
             text = 'Red won!'
 
             if opponent == 'CPU':
-                result_to_save = 'The player won against ' + CPU_difficulty[difficulty] + ' CPU on move ' + str(turn_count) + result_to_save
+                result_to_save = 'The player won against ' + CPU_difficulty[difficulty] + ' CPU on move ' + str(turn_count)  + ' on a ' + board_dimensions + result_to_save
             else:
-                result_to_save = 'Red player won on move ' + str(turn_count) + result_to_save
+                result_to_save = 'Red player won on move ' + str(turn_count) + ' on a ' + board_dimensions + result_to_save
             
         else:
             text = 'Yellow won!'
 
             if opponent == 'CPU':
-                result_to_save = 'The ' + CPU_difficulty[difficulty] + ' CPU won against the player on move ' + str(turn_count) + result_to_save
+                result_to_save = 'The ' + CPU_difficulty[difficulty] + ' CPU won against the player on move ' + str(turn_count) + ' on a ' + board_dimensions + result_to_save
             else:
-                result_to_save = 'Yellow player won on move ' + str(turn_count) + result_to_save
+                result_to_save = 'Yellow player won on move ' + str(turn_count) + ' on a ' + board_dimensions + result_to_save
 
 
         goto(resolution * -0.45, resolution * 0.37)
@@ -58,6 +60,7 @@ class GameOverState(object):
         write('Play again', font = ('Comic Sans', int(resolution * 0.05), 'normal'))
         update()
 
+        #Kirjutab mängu kokkuvõtte results.txt faili
         file_location = os.getcwd() + '/results.txt'
         result_file = open(file_location, 'a')
         result_file.write(result_to_save + '\n')

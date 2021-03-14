@@ -13,7 +13,7 @@ while play_again:
     game = PlayState(height, width, ball_size, horizontal_gap, resolution, vertical_gap, opponent, difficulty)
 
     result, turn_count = game.update()
-    GameOverState.writeResults(result, turn_count, opponent, difficulty, resolution)
+    GameOverState.writeResults(result, turn_count, opponent, difficulty, width, height, resolution)
 
 
     goto(0,0)
