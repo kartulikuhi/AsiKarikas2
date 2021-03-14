@@ -3,6 +3,7 @@ from turtle import *
 from Classes.board import Board
 from Functions.functions import play
 from Classes.cpu import CPU
+import time
 
 class PlayState(object):
     def __init__(self, board_height, board_width, ball_size, horizontal_gap, resolution, vertical_gap, opponent, CPU_difficulty):
@@ -17,6 +18,7 @@ class PlayState(object):
         self.move = 0
         self.winner = 0
         self.opponent = opponent
+        self.canInput = True
 
         #renderdamiseks vajalike parameetrite defineerimine
         self.ball_size = ball_size
@@ -36,8 +38,8 @@ class PlayState(object):
                     return self.winner, self.turnCount
                 else:
                     turtle.Screen().onclick(self.WhatRow)
-
                 update()
+
 
         else:
 
@@ -47,36 +49,40 @@ class PlayState(object):
                     return self.winner, self.turnCount
                 else:
                     turtle.Screen().onclick(self.WhatRowCPU)
-
                 update()
+
 
     #Inimene VS Inimene käik
     def WhatRow(self, x, y):
+        if self.canInput:
+            goto(x,y)
+            if abs(x) <= self.resolution / 2 - 20:
+                self.move = int(((self.resolution*0.95 * -0.5) + xcor())//self.horizontal_gap) + self.board.columns
 
-        goto(x,y)
-        if abs(x) <= self.resolution / 2 - 20:
-            self.move = int(((self.resolution*0.95 * -0.5) + xcor())//self.horizontal_gap) + self.board.columns
-
-            self.doMove()
-        else:
-            play('error')
+                self.doMove()
+            else:
+                play('error')
+        
         
     #Inimene VS Arvuti käik
     def WhatRowCPU(self, x, y):
+        if self.canInput:
+            goto(x, y)
+            if abs(x) <= self.resolution / 2 - 20:
+                self.move = int(((self.resolution*0.95 * -0.5) + xcor())//self.horizontal_gap) + self.board.columns
 
-        goto(x, y)
-        if abs(x) <= self.resolution / 2 - 20:
-            self.move = int(((self.resolution*0.95 * -0.5) + xcor())//self.horizontal_gap) + self.board.columns
+                self.doMove()
+                self.doMoveCPU()
 
-            self.doMove()
-            update()
-            self.doMoveCPU()
-        else:
-            play('error')
+            else:
+                play('error')
+
             
 
     #Üldine käigu tegemine
     def doMove(self):
+        
+        self.canInput = False
         error_beep = True
 
         for board_y in range(self.board.rows - 1, -1, -1): #Laua kõige ülemine koordinaat on 0 (y-telje positiivne suund allapoole)
@@ -93,6 +99,7 @@ class PlayState(object):
                 else:
                     dot(self.ball_size, 'yellow')
 
+                update()
                 play('move')
 
                 error_beep = False
@@ -114,6 +121,11 @@ class PlayState(object):
             
         if error_beep:
             play('error')
+
+        if not self.opponent == 'CPU':
+            self.canInput = True
+        elif self.player == 1:
+            self.canInput = True
 
     #Arvuti käik
     def doMoveCPU(self):

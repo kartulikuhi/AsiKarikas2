@@ -1,2 +1,0 @@
-The easy CPU won against the player on move 16 on a 6x7 board on 14/03/2021 at 13:20
-The player won against easy CPU on move 40 on a 6x7 board on 14/03/2021 at 13:22

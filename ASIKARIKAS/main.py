@@ -12,7 +12,6 @@ while play_again:
 
     height, width, ball_size, horizontal_gap, resolution, vertical_gap, opponent, difficulty, screen = CreateGrid()
     game = PlayState(height, width, ball_size, horizontal_gap, resolution, vertical_gap, opponent, difficulty)
-    play('start-up')
 
     result, turn_count = game.update()
     GameOverState.writeResults(result, turn_count, opponent, difficulty, width, height, resolution)
