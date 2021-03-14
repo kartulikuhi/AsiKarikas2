@@ -33,7 +33,7 @@ class PlayState(object):
             while True:
 
                 if self.winner != 0:
-                    return self.winner
+                    return self.winner, self.turnCount
                 else:
                     turtle.Screen().onclick(self.WhatRow)
 
@@ -44,7 +44,7 @@ class PlayState(object):
             while True:
 
                 if self.winner != 0:
-                    return self.winner
+                    return self.winner, self.turnCount
                 else:
                     turtle.Screen().onclick(self.WhatRowCPU)
 
@@ -96,12 +96,10 @@ class PlayState(object):
                 if self.board.calculateWins(self.player, [self.move, board_y]):
                     play('win')
                     self.winner = self.player
-                    return [self.player, self.board]
                 else:
                     if self.turnCount > self.board.rows * self.board.columns:
                         play('tie')
                         self.winner = 'tie'
-                        return [0, self.board]
                     else:
 
                         self.player = 2 if self.player == 1 else 1
