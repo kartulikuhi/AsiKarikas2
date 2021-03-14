@@ -29,15 +29,19 @@ def CreateGrid(): #Loob mängulaua graafiliselt kasutates turtle't
             while True:
 
                 loop_again = False
-                width = easygui.enterbox('How many columns (more than 8 is not recommended for playing against hard difficulty CPU)?')
+                width = easygui.enterbox('How many columns (more than 8 is not recommended for playing against hard difficulty CPU) (maximum 20)?')
 
                 for i in width:
 
                     if i not in '1234567890':
                         loop_again = True
                         break
+
                     
                 if loop_again:
+                    continue
+                
+                if int(width) > 20:
                     continue
 
                 width = int(width)
@@ -47,7 +51,7 @@ def CreateGrid(): #Loob mängulaua graafiliselt kasutates turtle't
             while True:
 
                 loop_again = False
-                height = easygui.enterbox('How many rows?')
+                height = easygui.enterbox('How many rows (maximum 20)?')
 
                 for i in height:
 
@@ -56,6 +60,9 @@ def CreateGrid(): #Loob mängulaua graafiliselt kasutates turtle't
                         break
                     
                 if loop_again:
+                    continue
+                
+                if int(height) > 20:
                     continue
 
                 height = int(height)

@@ -3,7 +3,6 @@ from turtle import *
 from Classes.board import Board
 from Functions.functions import play
 from Classes.cpu import CPU
-import time
 
 class PlayState(object):
     def __init__(self, board_height, board_width, ball_size, horizontal_gap, resolution, vertical_gap, opponent, CPU_difficulty):
@@ -19,6 +18,7 @@ class PlayState(object):
         self.winner = 0
         self.opponent = opponent
         self.canInput = True
+        self.error_beep = True
 
         #renderdamiseks vajalike parameetrite defineerimine
         self.ball_size = ball_size
@@ -56,7 +56,7 @@ class PlayState(object):
     def WhatRow(self, x, y):
         if self.canInput:
             goto(x,y)
-            if abs(x) <= self.resolution / 2 - 20:
+            if abs(x) <= self.resolution / 2 - 25:
                 self.move = int(((self.resolution*0.95 * -0.5) + xcor())//self.horizontal_gap) + self.board.columns
 
                 self.doMove()
@@ -68,11 +68,12 @@ class PlayState(object):
     def WhatRowCPU(self, x, y):
         if self.canInput:
             goto(x, y)
-            if abs(x) <= self.resolution / 2 - 20:
+            if abs(x) <= self.resolution / 2 - 25:
                 self.move = int(((self.resolution*0.95 * -0.5) + xcor())//self.horizontal_gap) + self.board.columns
 
                 self.doMove()
-                self.doMoveCPU()
+                if not self.error_beep and self.winner == 0:
+                    self.doMoveCPU()
 
             else:
                 play('error')
@@ -83,7 +84,7 @@ class PlayState(object):
     def doMove(self):
         
         self.canInput = False
-        error_beep = True
+        self.error_beep = True
 
         for board_y in range(self.board.rows - 1, -1, -1): #Laua kõige ülemine koordinaat on 0 (y-telje positiivne suund allapoole)
 
@@ -102,30 +103,34 @@ class PlayState(object):
                 update()
                 play('move')
 
-                error_beep = False
+                self.error_beep = False
                 self.turnCount += 1
 
                 #Kontrollib, kas viimati käidud käiguga võideti või tekib viik, kui ei, siis on teise mängija kord
                 if self.board.calculateWins(self.player, [self.move, board_y]):
                     play('win')
                     self.winner = self.player
+                    return
                 else:
                     if self.turnCount > self.board.rows * self.board.columns:
                         play('tie')
                         self.winner = 'tie'
+                        return
                     else:
 
                         self.player = 2 if self.player == 1 else 1
             
                 break
             
-        if error_beep:
+        if self.error_beep:
             play('error')
+            self.canInput = True
 
-        if not self.opponent == 'CPU':
-            self.canInput = True
-        elif self.player == 1:
-            self.canInput = True
+        else:
+            if not self.opponent == 'CPU':
+                self.canInput = True
+            elif self.player == 1:
+                self.canInput = True
 
     #Arvuti käik
     def doMoveCPU(self):

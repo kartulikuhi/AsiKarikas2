@@ -13,7 +13,4 @@ Käikude tegemiseks tuleb vasak-klikkida veerus, kuhu soovitakse käik teha.
 
 Raske tasemega CPU vastu mängides ei ole soovituslik valida rohkem kui 8 veergu lauale (juhul kui valitakse custom suurusega laud), sest sel juhul võib käikude tegemine väga kaua aega võtta. 
 
-Inimene VS inimene mängudes võib võtta nii suure laua kui on soovitud.
-
-
-
+Maksimum laua suurus on 20x20
