@@ -88,7 +88,7 @@ class PlayState(object):
                     dot(self.ball_size, 'yellow')
 
                 play('move')
-                
+
                 error_beep = False
                 self.turnCount += 1
 
@@ -99,7 +99,7 @@ class PlayState(object):
                     return [self.player, self.board]
                 else:
                     if self.turnCount > self.board.rows * self.board.columns:
-                        play('tiesound')
+                        play('tie')
                         self.winner = 'tie'
                         return [0, self.board]
                     else:
