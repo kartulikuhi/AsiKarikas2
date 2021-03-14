@@ -1,62 +1,36 @@
 import random
-from sys import call_tracing
 
 class CPU(object):
 
     def __init__(self,  difficulty):
         self.difficulty = difficulty
-        self.defensiveMove = 1
-        self.offensiveMove = 2
 
     def makemove(self, board):
+
         if self.difficulty == 1:
             return self.makeEasyMove(board)
+
         elif self.difficulty == 2:
             return self.makeMediumMove(board)
+
         else:
             return self.makeHardMove(board)
 
-    def makeEasyMove(self, board):
+    def makeEasyMove(self, board): #arvutab praeguse käigu parima käigu ja käib selle
 
-        board_copy = board.tileMap
-        score = 0
-        return_vals = []
+        (best_col, best_score) = self.findBestMove(board, 2, 2)
 
-        for column in range(board.columns):
-            for row in range(board.rows - 1, -1, -1):
-
-                if board_copy[column][row] == False:
-
-                    board_copy[column][row] = 2
-
-                    temp_score = board.returnLongestStraight(2)[0]
-
-                    if temp_score == score:
-                        score = temp_score
-                        return_vals.append(column)
-                    elif temp_score > score:
-                        score = temp_score
-                        return_vals = [column]
-
-                    if board.calculateWins(2, [column, row]):
-                        board_copy[column][row] = False
-                        return column
-
-                    board_copy[column][row] = 1
-
-                    if board.calculateWins(1, [column, row]):
-                        board_copy[column][row] = False
-                        return column
-
-                    board_copy[column][row] = False
-
-                    break
+        if best_col is not None:
+            return best_col
         
-        return random.choice(return_vals)
+        x = 0
+        while board[x][0] != False:
+            x += 1
+        return x
     
                                 
 
-    def makeMediumMove(self, board): 
+    def makeMediumMove(self, board): #arvutab 2 käiguringi ette ja teeb selle põhjal parima käigu
 
         (best_col, best_score) = self.findBestMove(board, 2, 4)
 
@@ -70,7 +44,7 @@ class CPU(object):
 
 
 
-    def makeHardMove(self, board):
+    def makeHardMove(self, board): #Arvutab 3 käiguringi ette ja teeb selle põhjal parima käigu
 
         (best_col, best_score) = self.findBestMove(board, 2, 6)
 
@@ -82,7 +56,7 @@ class CPU(object):
             x += 1
         return x
 
-    def findBestMove(self, board, player, turn_count):
+    def findBestMove(self, board, player, turn_count): #tagastab parima käigu antud mängijale, rekursiivsusaste on turn_count
 
 
         other_player = 1 if player == 2 else 2
@@ -107,7 +81,7 @@ class CPU(object):
 
                 if board.calculateWins(player, [column, row]):
 
-                    score = 100 * turn_count
+                    score = 100 * turn_count #mida sügavamal rekursiivsusredelil seda vähem punkte on väärt.
 
                 else:
 

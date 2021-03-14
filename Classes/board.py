@@ -1,4 +1,3 @@
-#Eelnevalt tuleb tagada, et laua laius >= 4 ja pikkus >= 4 kuna siin seda ei kontrollita.
 class Board(object):
     def __init__(self, board_height, board_width):
 
@@ -8,7 +7,7 @@ class Board(object):
         self.coins = []
         
 
-    def generateBoard(self):
+    def generateBoard(self): #tekitab listi False väärtustest. Kui tehakse käik, muudetakse vastaval kohal väärtuseks mängija, kes käigu tegi
         temp_lst = []
         for column in range(self.columns):
             temp_lst.append([])
@@ -17,7 +16,8 @@ class Board(object):
         
         return temp_lst
     
-    def calculateWins(self, player, coords):
+
+    def calculateWins(self, player, coords): #kontrollib mingist positsioonist, kas antud mängija võitis
         
         counter = 0
         turn_column = coords[0]
@@ -47,7 +47,7 @@ class Board(object):
             if counter >= 4:
                 return True
 
-        #diagonaalne kontroll (vasakule alla)
+        #diagonaalne kontroll (paremale alla)
 
         counter = 0
 
@@ -76,7 +76,7 @@ class Board(object):
                 return True
 
         
-        #diagonaalne kontroll (vasakule üles)
+        #diagonaalne kontroll (paremale üles)
         counter = 0
 
         min_column = max(0, turn_column - 3)
@@ -106,14 +106,14 @@ class Board(object):
         return False
 
 
-    def returnScore(self, player, coords):
+    def returnScore(self, player, coords): #tagastab mängija skoori mingi laua punkti suhtes.
 
         counter = 0
         turn_column = coords[0]
         turn_row = coords[1]
         score = 0
 
-        #vertikaalne kontroll
+        #vertikaalne 
         current_longest = 0
         longest_counter = 0
         counter = 0
@@ -138,7 +138,7 @@ class Board(object):
         
         score += current_longest * (longest_counter + 1)
 
-        #horisontaalne kontroll
+        #horisontaalne 
         counter = 0
         current_longest = 0
         longest_counter = 0
@@ -162,7 +162,7 @@ class Board(object):
         
         score += current_longest * (longest_counter + 1)
 
-        #diagonaalne kontroll (vasakule alla)
+        #diagonaalne (paremale alla)
 
         counter = 0
         current_longest = 0
@@ -203,7 +203,7 @@ class Board(object):
         score += current_longest * (longest_counter + 1)
 
         
-        #diagonaalne kontroll (vasakule üles)
+        #diagonaalne (paremale üles)
         counter = 0
         current_longest = 0
         longest_counter = 0
