@@ -54,19 +54,25 @@ class PlayState(object):
     def WhatRow(self, x, y):
 
         goto(x,y)
-        self.move = int(((self.resolution*0.95 * -0.5) + xcor())//self.horizontal_gap) + self.board.columns
+        if abs(x) <= self.resolution / 2 - 20:
+            self.move = int(((self.resolution*0.95 * -0.5) + xcor())//self.horizontal_gap) + self.board.columns
 
-        self.doMove()
-    
+            self.doMove()
+        else:
+            play('error')
+        
     #Inimene VS Arvuti käik
     def WhatRowCPU(self, x, y):
 
         goto(x, y)
-        self.move = int(((self.resolution*0.95 * -0.5) + xcor())//self.horizontal_gap) + self.board.columns
+        if abs(x) <= self.resolution / 2 - 20:
+            self.move = int(((self.resolution*0.95 * -0.5) + xcor())//self.horizontal_gap) + self.board.columns
 
-        self.doMove()
-        update()
-        self.doMoveCPU()
+            self.doMove()
+            update()
+            self.doMoveCPU()
+        else:
+            play('error')
             
 
     #Üldine käigu tegemine
